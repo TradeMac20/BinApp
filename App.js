@@ -1,20 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, StatusBar } from 'react-native';
+import AuthForm from './F_components/AuthForm';
+import WelcomeModal from './Screens/WelcomeModal';
 
-export default function App() {
+const App = () => {
+  const [showModal, setShowModal] = useState(true);
+  const [screen, setScreen] = useState('login');
+
+  const toggleScreen = () => {
+    setScreen(screen === 'login' ? 'signup' : 'login');
+  };
+
+  const handleSubmit = (data) => {
+    console.log('Form submitted:', data);
+    // TODO: Add API call
+  };
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+      <View style={{ flex: 1 }}>
+       <AuthForm type={screen} toggleScreen={toggleScreen} onSubmit={handleSubmit} />
+       <WelcomeModal visible={showModal} onClose={()=> setShowModal(false)} />
+      </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
