@@ -20,7 +20,7 @@ const registerUser = async(req, res)=> {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         //Insert user
-        const newUser = await pool.query('INSERT INTO users (username, email, password, role, has_seen_modal) VALUES ($1, $2, $3, $4, $5) RETURNING *', [username, email, hashedPassword, role, has_seen_modal]);
+        const newUser = await pool.query('INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *', [username, email, hashedPassword, role, has_seen_modal]);
 
         res.status(201).json({user: newUser.rows[0] });
     } catch (err) {
@@ -29,7 +29,7 @@ const registerUser = async(req, res)=> {
        }
 };
 
-const   loginUser = async (req,res)=>{
+const  loginUser = async (req,res)=>{
     const {email, password} = req.body;
 
     try {
@@ -47,10 +47,11 @@ const   loginUser = async (req,res)=>{
             user: {id: user.id, username: user.username, email: user.email},
             token
         });  
-    } catch (e){
-        res.status(500).json({error: 'Server error'})
+    } catch (err){
+        res.status(500).json({error: 'Server error',err})
 
     }
 };
+
 
 module.exports = { registerUser,loginUser}

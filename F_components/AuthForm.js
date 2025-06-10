@@ -17,11 +17,30 @@ import {
 import { scale, verticalScale } from 'react-native-size-matters';
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons';
+import WelcomeModal from '../Screens/WelcomeModal';  // Modal component for welcome message
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing modal seen state
 
-// Import your API functions
-import { register, login } from './frontend/api/auth'; // Adjust the path as needed
+// Imported axios API functions
+import { register, login } from './frontend/api/auth';
+
+
 
 const AuthForm = ({ type = 'login', onSubmit, toggleScreen }) => {
+  //Handle modal
+  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    const checkSeen = async() => {
+      const seen = await AsyncStorage.getItem('seenModal');
+      if(!seen) {
+        setShowModal(true);
+      }else{console.log('Modal already seen');
+        await AsyncStorage.removeItem('seenModal'); // Remove seen state after showing modal (Manual testing)
+        // setShowModal(false); // Uncomment this if you want to hide the modal after first showing
+      }
+    }
+    checkSeen();
+  }, []);
+
   const isLogin = type === 'login';
 
   const appLogo = require('../assets/oSense_profile.png');
@@ -62,18 +81,17 @@ const AuthForm = ({ type = 'login', onSubmit, toggleScreen }) => {
         console.log('Login successful:', response);
         onSubmit(response);
       } else {
-        const has_seen_modal = false;
         const response = await register({
           username: name,
           email,
           password,
           role,
-          has_seen_modal,
         });
         Alert.alert('Success', 'Account created successfully!');
         console.log('Registration successful:', response);
         onSubmit(response);
       }
+      await AsyncStorage.setItem('seenModal', 'true'); // Mark modal as seen
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || 'An unexpected error occurred.';
@@ -83,11 +101,12 @@ const AuthForm = ({ type = 'login', onSubmit, toggleScreen }) => {
   };
 
   return (
-    // ScrollView and TouchableWithoutFeedback wrapping for 
+    // ScrollView and TouchableWithoutFeedback wrapping for easy screen dismissal
     <ScrollView
       contentContainerStyle={styles.scrollContentContainer}
       keyboardShouldPersistTaps="handled" // Handling taps outside inputs
     >
+      <WelcomeModal visible={showModal} onClose={()=> setShowModal(false)} />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <StatusBar barStyle={'dark-content'} />
@@ -194,6 +213,7 @@ const AuthForm = ({ type = 'login', onSubmit, toggleScreen }) => {
             </Text>
           </Text>
         </View>
+      
       </TouchableWithoutFeedback>
     </ScrollView>
   );
