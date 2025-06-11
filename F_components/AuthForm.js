@@ -13,15 +13,16 @@ import {
   ScrollView, // Import ScrollView
   TouchableWithoutFeedback, // Import TouchableWithoutFeedback
   Keyboard, // Import Keyboard
+  KeyboardAvoidingView, //Handlese keyboard position
 } from 'react-native';
 import { scale, verticalScale } from 'react-native-size-matters';
 import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/Ionicons';
-import WelcomeModal from '../Screens/WelcomeModal';  // Modal component for welcome message
+import WelcomeModal from './Screens/WelcomeModal';  // Modal component for welcome message
 import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing modal seen state
 
 // Imported axios API functions
-import { register, login } from './frontend/api/auth';
+import { register, login } from '../Backend/middleware/auth';
 
 
 
@@ -101,121 +102,131 @@ const AuthForm = ({ type = 'login', onSubmit, toggleScreen }) => {
   };
 
   return (
-    // ScrollView and TouchableWithoutFeedback wrapping for easy screen dismissal
-    <ScrollView
-      contentContainerStyle={styles.scrollContentContainer}
-      keyboardShouldPersistTaps="handled" // Handling taps outside inputs
+    <KeyboardAvoidingView 
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1, backgroundColor: styles.scrollContentContainer.backgroundColor }} 
+   // keyboardVerticalOffset={Platform.OS === "ios" ? verticalScale(10) : 0} // Adjust for iOS keyboard
     >
-      <WelcomeModal visible={showModal} onClose={()=> setShowModal(false)} />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <StatusBar barStyle={'dark-content'} />
-          <View
-            style={{
-              width: '100%',
-              height: verticalScale(150),
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: verticalScale(10),
-              alignSelf: 'center',
-            }}
+      <ScrollView
+      //ScrollView and TouchableWithoutFeedback wrapping for easy screen dismissal
+        contentContainerStyle={styles.scrollContentContainer}
+        keyboardShouldPersistTaps="handled" // Handling taps outside inputs
+      >
+      
+        <WelcomeModal visible={showModal} onClose={()=> setShowModal(false)} />
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container} 
+            behavior='padding' keyboardVerticalOffset={Platform.OS==="ios"? scale(10): 0}
           >
-            <Image
-              source={appLogo}
-              style={{ width: '100%', height: '100%' }}
-              resizeMode="contain"
-            />
-          </View>
-          <Text style={styles.title}>Welcome,</Text>
-          <Text style={styles.subtitle}>
-            {isLogin
-              ? 'Login to your account'
-              : 'Create an account to get started'}
-          </Text>
-
-          {!isLogin && (
-            <TextInput
-              placeholder="Enter your name"
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              autoCapitalize="words"
-            />
-          )}
-
-          <TextInput
-            placeholder="Enter your email"
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <View style={styles.passwordInputContainer}>
-            <TextInput
-              placeholder="Enter your password"
-              style={styles.passwordInput}
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.eyeIconContainer}
+            <StatusBar barStyle={'dark-content'} />
+            <View
+              style={{
+                width: '100%',
+                height: verticalScale(150),
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: verticalScale(10),
+                alignSelf: 'center',
+              }}
             >
-              <Icon
-                name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                size={scale(24)}
-                color="#999"
-              />
-            </TouchableOpacity>
-          </View>
-
-          {!isLogin && (
-            <View>
-              <RNPickerSelect
-                onValueChange={(value) => setRole(value)}
-                value={role}
-                items={[
-                  { label: 'Consumer', value: 'consumer' },
-                  { label: 'Waste Collector', value: 'collector' },
-                ]}
-                placeholder={{ label: 'Select your role', value: null }}
-                style={pickerSelectStyles}
-                useNativeAndroidPickerStyle={false}
-                onOpen={() => setIsPickerActive(true)}
-                onClose={() => setIsPickerActive(false)}
-                Icon={() => (
-                  <View style={{ position: 'absolute', right: 10, top: 12 }}>
-                    <Animated.View
-                      style={{ transform: [{ rotate: rotateInterpolate }] }}
-                    >
-                      {/* Increased icon size */}
-                      <Icon name="chevron-down" size={scale(28)} color="#999" />
-                    </Animated.View>
-                  </View>
-                )}
+              <Image
+                source={appLogo}
+                style={{ width: '100%', height: '100%' }}
+                resizeMode="contain"
               />
             </View>
-          )}
-
-          <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
-            <Text style={styles.buttonText}>
-              {isLogin ? 'Login' : 'Create Account'}
+            <Text style={styles.title}>Welcome,</Text>
+            <Text style={styles.subtitle}>
+              {isLogin
+                ? 'Login to your account'
+                : 'Create an account to get started'}
             </Text>
-          </TouchableOpacity>
 
-          <Text style={styles.footer}>
-            {isLogin ? `Don't have an account? ` : 'Already have an account? '}
-            <Text style={styles.link} onPress={toggleScreen}>
-              {isLogin ? 'Register' : 'Login'}
+            {!isLogin && (
+              <TextInput
+                placeholder="Enter your name"
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
+              />
+            )}
+
+            <TextInput
+              placeholder="Enter your email"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                placeholder="Enter your password"
+                style={styles.passwordInput}
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIconContainer}
+              >
+                <Icon
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={scale(24)}
+                  color="#999"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {!isLogin && (
+              <View>
+                <RNPickerSelect
+                  onValueChange={(value) => setRole(value)}
+                  value={role}
+                  items={[
+                    { label: 'Consumer', value: 'consumer' },
+                    { label: 'Waste Collector', value: 'collector' },
+                  ]}
+                  placeholder={{ label: 'Select your role', value: null }}
+                  style={pickerSelectStyles}
+                  useNativeAndroidPickerStyle={false}
+                  onOpen={() => setIsPickerActive(true)}
+                  onClose={() => setIsPickerActive(false)}
+                  Icon={() => (
+                    <View style={{ position: 'absolute', right: 10, top: 12 }}>
+                      <Animated.View
+                        style={{ transform: [{ rotate: rotateInterpolate }] }}
+                      >
+                        {/* Increased icon size */}
+                        <Icon name="chevron-down" size={scale(28)} color="#999" />
+                      </Animated.View>
+                    </View>
+                  )}
+                />
+              </View>
+            )}
+
+            <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
+              <Text style={styles.buttonText}>
+                {isLogin ? 'Login' : 'Create Account'}
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={styles.footer}>
+              {isLogin ? `Don't have an account? ` : 'Already have an account? '}
+              <Text style={styles.link} onPress={toggleScreen}>
+                {isLogin ? 'Register' : 'Login'}
+              </Text>
             </Text>
-          </Text>
-        </View>
-      
-      </TouchableWithoutFeedback>
-    </ScrollView>
+          </View>
+        
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
