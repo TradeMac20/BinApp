@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "binApp",
+    "slug": "binApp",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "oSense",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "oSense.app",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "047377ed-c25d-4949-9a0e-225139e75108"
+      },
+      "firebase": {
+        "apiKey": "AIzaSyBQHTne8YsaRp4y4stnCQmzDdXy_q5ob_c",
+        "authDomain": "osense-application.firebaseapp.com",
+        "projectId": "osense-application",
+        "storageBucket": "osense-application.firebasestorage.app",
+        "messagingSenderId": "24592439480",
+        "appId": "1:24592439480:web:278bd929842d43dae03c4d",
+        "measurementId": "G-R91E1JV6LS"
+      }
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/sounds/notification.mp3"]
+        }
+
+      ],
+      [
+     "expo-build-properties",
+     {
+      "android": {
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "buildToolsVersion": "34.0.0"
+      
+       }     }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsImpl": "mapbox"
+        }
+      ]
+    ]
+  }
+}

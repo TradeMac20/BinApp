@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "24592439480",
+    "project_id": "osense-application",
+    "storage_bucket": "osense-application.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24592439480:android:2ceb3ae5f3435f7de03c4d",
+        "android_client_info": {
+          "package_name": "oSense.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCbUQS7FWlsIl52tgrHQNj03Zv1KwDfn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
